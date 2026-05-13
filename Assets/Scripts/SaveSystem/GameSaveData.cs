@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Serializable data transfer object representing the game's state.
+/// </summary>
 [Serializable]
 public class GameSaveData
 {

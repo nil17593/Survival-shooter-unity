@@ -2,15 +2,20 @@ using System;
 using System.IO;
 using UnityEngine;
 
+/// <summary>
+/// Handles reading, writing, and deleting JSON save data on local disk.
+/// </summary>
 public class JsonSaveRepository
 {
     readonly string filePath;
 
+    // Initializes the repository with a persistent file path
     public JsonSaveRepository(string fileName)
     {
         filePath = Path.Combine(Application.persistentDataPath, fileName);
     }
 
+    // Serializes the data object and writes it to disk
     public bool SaveToFile(GameSaveData data)
     {
         try
@@ -26,6 +31,7 @@ public class JsonSaveRepository
         }
     }
 
+    // Reads the JSON file from disk and deserializes it
     public GameSaveData LoadFromFile()
     {
         if (!HasSave())
@@ -53,11 +59,13 @@ public class JsonSaveRepository
         }
     }
 
+    // Checks if a save file currently exists on disk
     public bool HasSave()
     {
         return File.Exists(filePath);
     }
 
+    // Deletes the save file if it exists
     public bool DeleteSave()
     {
         if (!HasSave())

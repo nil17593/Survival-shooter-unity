@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour, ISaveable
 {
     public int startingHealth = 100;
     public Slider healthSlider;
@@ -23,7 +23,7 @@ public class PlayerHealth : MonoBehaviour
     int currentHealth;
 
     public int CurrentHealth { get { return currentHealth; } }
-
+    public bool IsDead { get { return isDead; } }
     void Awake ()
     {
         anim = GetComponent <Animator> ();
@@ -33,7 +33,21 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = startingHealth;
     }
 
+    void OnEnable()
+    {
+        if (SaveLoadManager.Instance != null)
+        {
+            SaveLoadManager.Instance.Register(this);
+        }
+    }
 
+    void OnDisable()
+    {
+        if (SaveLoadManager.Instance != null && !SaveLoadManager.IsQuitting)
+        {
+            SaveLoadManager.Instance.Unregister(this);
+        }
+    }
     void Update ()
     {
         if(damaged)
@@ -68,7 +82,10 @@ public class PlayerHealth : MonoBehaviour
     void Death ()
     {
         isDead = true;
-
+        if (SaveLoadManager.Instance != null)
+        {
+            SaveLoadManager.Instance.DeleteSave();
+        }
         playerShooting.DisableEffects ();
 
         anim.SetTrigger ("Die");
@@ -84,5 +101,22 @@ public class PlayerHealth : MonoBehaviour
     public void RestartLevel ()
     {
         SceneManager.LoadScene (0);
+    }
+
+    public void Save(GameSaveData data)
+    {
+        data.playerHealth = currentHealth;
+    }
+
+    public void Load(GameSaveData data)
+    {
+        currentHealth = data.playerHealth;
+        healthSlider.value = currentHealth;
+
+        // Failsafe: if somehow the saved health is 0, trigger death
+        if (currentHealth <= 0 && !isDead)
+        {
+            Death();
+        }
     }
 }

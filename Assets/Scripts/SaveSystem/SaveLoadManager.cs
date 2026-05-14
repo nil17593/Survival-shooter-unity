@@ -46,16 +46,6 @@ namespace SaveSystem
             SceneManager.sceneLoaded += HandleSceneLoaded;
         }
 
-        // Auto-loads an existing save file on game launch
-        private void Start()
-        {
-            if (HasSave())
-            {
-                Debug.Log("Found existing save file. Auto-loading on startup...");
-                LoadGame();
-            }
-        }
-
         // Cleans up event subscriptions and singleton reference
         private void OnDestroy()
         {

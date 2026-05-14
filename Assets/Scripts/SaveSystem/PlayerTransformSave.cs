@@ -42,11 +42,13 @@ namespace SaveSystem
                 rb.angularVelocity = Vector3.zero;
                 rb.position = data.playerPosition;
                 rb.rotation = data.playerRotation;
-                return;
             }
 
             transform.position = data.playerPosition;
             transform.rotation = data.playerRotation;
+
+            // Forces Unity's physics engine to instantly accept the new position
+            Physics.SyncTransforms();
         }
     }
 }

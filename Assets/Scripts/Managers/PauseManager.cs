@@ -2,22 +2,25 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using SaveSystem;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public class PauseManager : MonoBehaviour {
-	
+public class PauseManager : MonoBehaviour
+{
+	[SerializeField] private GameObject gameSavedToastUI;
 	public AudioMixerSnapshot paused;
 	public AudioMixerSnapshot unpaused;
-	
+
 	Canvas canvas;
-	
+
 	void Start()
 	{
 		canvas = GetComponent<Canvas>();
 	}
-	
+
 	void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.Escape))
@@ -26,34 +29,45 @@ public class PauseManager : MonoBehaviour {
 			Pause();
 		}
 	}
-	
+
 	public void Pause()
 	{
+		if (gameSavedToastUI.activeSelf)
+			gameSavedToastUI.SetActive(false);
 		Time.timeScale = Time.timeScale == 0 ? 1 : 0;
-		Lowpass ();
-		
+		Lowpass();
+
 	}
-	
+
 	void Lowpass()
 	{
 		if (Time.timeScale == 0)
 		{
 			paused.TransitionTo(.01f);
 		}
-		
+
 		else
-			
+
 		{
 			unpaused.TransitionTo(.01f);
 		}
 	}
-	
+
 	public void Quit()
 	{
-		#if UNITY_EDITOR 
+#if UNITY_EDITOR
 		EditorApplication.isPlaying = false;
-		#else 
+#else
 		Application.Quit();
-		#endif
+#endif
+	}
+
+	public void SaveGame()
+	{
+		if (SaveLoadManager.Instance != null)
+		{
+			SaveLoadManager.Instance.SaveGame();
+			gameSavedToastUI.SetActive(true);
+		}
 	}
 }

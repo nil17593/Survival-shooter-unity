@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using SaveSystem;
 
 public class ScoreManager : MonoBehaviour, ISaveable
 {

@@ -1,46 +1,66 @@
 using UnityEngine;
 
-/// <summary>
-/// Tracks and serializes the elapsed survival time of the player.
-/// </summary>
-public class SurvivalTimer : MonoBehaviour, ISaveable
+namespace SaveSystem
 {
-    [SerializeField] PlayerHealth playerHealth;
-
-    float elapsedTime;
-
-    public float ElapsedTime { get { return elapsedTime; } }
-
-    // Validates component dependencies
-    void Awake()
+    /// <summary>
+    /// Tracks and serializes the elapsed survival time of the player.
+    /// </summary>
+    public class SurvivalTimer : MonoBehaviour, ISaveable
     {
-        if (playerHealth == null)
-        {
-            Debug.LogError("SurvivalTimer requires a PlayerHealth reference.");
-            enabled = false;
-        }
-    }
+        [SerializeField] PlayerHealth playerHealth;
 
-    // Increments timer while the player is alive
-    void Update()
-    {
-        if (playerHealth != null && playerHealth.CurrentHealth <= 0)
+        float elapsedTime;
+
+        public float ElapsedTime { get { return elapsedTime; } }
+
+        // Registers with the save manager when enabled
+        void OnEnable()
         {
-            return;
+            if (SaveLoadManager.Instance != null)
+            {
+                SaveLoadManager.Instance.Register(this);
+            }
         }
 
-        elapsedTime += Time.deltaTime;
-    }
+        void OnDisable()
+        {
+            if (SaveLoadManager.Instance != null && !SaveLoadManager.IsQuitting)
+            {
+                SaveLoadManager.Instance.Unregister(this);
+            }
+        }
 
-    // Records elapsed time to the save data
-    public void Save(GameSaveData data)
-    {
-        data.survivalElapsedTime = elapsedTime;
-    }
+        // Validates component dependencies
+        void Awake()
+        {
+            if (playerHealth == null)
+            {
+                Debug.LogError("SurvivalTimer requires a PlayerHealth reference.");
+                enabled = false;
+            }
+        }
 
-    // Restores elapsed time from the save data
-    public void Load(GameSaveData data)
-    {
-        elapsedTime = Mathf.Max(0f, data.survivalElapsedTime);
+        // Increments timer while the player is alive
+        void Update()
+        {
+            if (playerHealth != null && playerHealth.CurrentHealth <= 0)
+            {
+                return;
+            }
+
+            elapsedTime += Time.deltaTime;
+        }
+
+        // Records elapsed time to the save data
+        public void Save(GameSaveData data)
+        {
+            data.survivalElapsedTime = elapsedTime;
+        }
+
+        // Restores elapsed time from the save data
+        public void Load(GameSaveData data)
+        {
+            elapsedTime = Mathf.Max(0f, data.survivalElapsedTime);
+        }
     }
 }

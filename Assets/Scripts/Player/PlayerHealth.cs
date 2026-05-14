@@ -100,7 +100,7 @@ public class PlayerHealth : MonoBehaviour, ISaveable
 
     public void RestartLevel ()
     {
-        SceneManager.LoadScene (0);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void Save(GameSaveData data)

@@ -11,15 +11,21 @@ namespace SaveSystem
     /// </summary>
     public class SaveLoadManager : MonoBehaviour
     {
+        #region Serialized Fields
         [SerializeField] private string saveFileName = "savegame.json";
+        #endregion
 
+        #region Static Properties
         public static bool IsQuitting { get; private set; } = false;
         public static SaveLoadManager Instance { get; private set; }
 
         private static GameSaveData pendingLoadData;
+        #endregion
 
+        #region Private Fields
         private readonly List<ISaveable> saveables = new List<ISaveable>();
         private JsonSaveRepository repository;
+        #endregion
 
         // Initializes the singleton and repository
         private void Awake()

@@ -7,11 +7,17 @@ namespace SaveSystem
     /// </summary>
     public class SurvivalTimer : MonoBehaviour, ISaveable
     {
+        #region Serialized Fields
         [SerializeField] PlayerHealth playerHealth;
+        #endregion
 
+        #region Private Fields
         float elapsedTime;
+        #endregion
 
+        #region Public Properties
         public float ElapsedTime { get { return elapsedTime; } }
+        #endregion
 
         // Registers with the save manager when enabled
         void OnEnable()
